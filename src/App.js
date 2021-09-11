@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Navbar, Container, Nav, NavDropdown, Button } from 'react-bootstrap';
 import Data from './data.js';
 import './App.css';
 import Detail from './Detail.js';
 import axios from 'axios';
-
 import { Link, Route, Switch } from 'react-router-dom';
+
+export let stocksContext = React.createContext();
 
 function Jumbotron() {
   return (
@@ -18,12 +19,25 @@ function Jumbotron() {
 }
 
 function Card(props) {
+
+  // let stocks = useContext(stocksContext);
+
   return (
     <div className="col-md-4">
       <img src={'https://codingapple1.github.io/shop/shoes' + (props.shoes['id']+1) + '.jpg'} alt="" />
       <h4>{props.shoes['title']}</h4>
+      <Test id={props.shoes.id} />
       <p>{props.shoes['content']} & {props.shoes['price']}</p>
     </div>
+  );
+}
+
+function Test(props) {
+
+  let stocks = useContext(stocksContext);
+
+  return (
+    <p>재고: {stocks[props.id]}</p>
   );
 }
 
@@ -59,6 +73,8 @@ function App() {
         <Route exact path="/">
           <Jumbotron></Jumbotron>
           <div className="container">
+
+            <stocksContext.Provider value={stocks}>
             <div className="row">
               {
                 shoes.map((s, i)=>{
@@ -66,6 +82,8 @@ function App() {
                 })
               }
             </div>
+            </stocksContext.Provider>
+
             <button className="btn btn-primary" onClick={()=>{
 
               // show loading 
@@ -79,9 +97,11 @@ function App() {
           </div>
         </Route>
 
+        <stocksContext.Provider value={stocks}>
         <Route path="/detail/:id">
           <Detail shoes={shoes} stocks={stocks} stocksChange={stocksChange} />
         </Route>
+        </stocksContext.Provider>
 
         <Route path="/:id">
           <div>아무거나 여기 보여주셈</div>
