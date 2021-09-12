@@ -4,7 +4,8 @@ import Data from './data.js';
 import './App.css';
 import Detail from './Detail.js';
 import axios from 'axios';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Link, Route, Switch, useHistory } from 'react-router-dom';
+import Cart from './Cart.js';
 
 export let stocksContext = React.createContext();
 
@@ -21,9 +22,10 @@ function Jumbotron() {
 function Card(props) {
 
   // let stocks = useContext(stocksContext);
+  let history = useHistory();
 
   return (
-    <div className="col-md-4">
+    <div className="col-md-4" onClick={()=>{ history.push("/detail/" + props.shoes['id']) }}>
       <img src={'https://codingapple1.github.io/shop/shoes' + (props.shoes['id']+1) + '.jpg'} alt="" />
       <h4>{props.shoes['title']}</h4>
       <Test id={props.shoes.id} />
@@ -96,16 +98,24 @@ function App() {
             }}>더보기</button>
           </div>
         </Route>
-
+        
+        <Route path="/cart">        
+          <Cart />
+        </Route>
+      
         <stocksContext.Provider value={stocks}>
         <Route path="/detail/:id">
           <Detail shoes={shoes} stocks={stocks} stocksChange={stocksChange} />
         </Route>
         </stocksContext.Provider>
+        <p>Hello End</p>
+
+        
 
         <Route path="/:id">
           <div>아무거나 여기 보여주셈</div>
         </Route>
+
       </Switch>
     </div>
   );

@@ -5,6 +5,7 @@ import './Detail.scss';
 import { stocksContext } from './App.js';
 import { Nav } from 'react-bootstrap';
 import { CSSTransition } from 'react-transition-group';
+import { connect } from 'react-redux';
 
 let Box = styled.div`
     padding: 20px;
@@ -67,6 +68,10 @@ function Detail(props) {
                         let tmpArr = [...props.stocks];
                         tmpArr[id]--;
                         props.stocksChange(tmpArr);
+
+                        props.dispatch({type:"add", payload:{productId: 3, productName:props.shoes[id]['title'], productQuantity:1}});
+                        history.push('/cart');
+
                     }}>주문하기</button>                     
                     <button className="btn btn-secondary" onClick={()=>{ history.goBack() }}>뒤로가기</button> 
                 </div>
@@ -96,20 +101,31 @@ function TabContents(props) {
         props.animationSwitchChange(true);
     });
 
+    let result;
+
     switch(props.tabs) {
-        case 0: return(<div>Tabs1</div>); break;
-        case 1: return(<div>Tabs2</div>); break;
-        case 2: return(<div>Tabs3</div>); break;
+        case 0: default: result = <div>Tabs1</div>; break;
+        case 1: result = <div>Tabs2</div>; break;
+        case 2: result = <div>Tabs3</div>; break;
     }
+    return result;
 }
 
+// Context API
 function Stock(props) {
 
     let test = useContext(stocksContext);
 
     return(
-        <p>재고 : {props.stocks[props.id]}</p>
+        <p>재고 : {test[props.id]}</p>
     );
 }
 
-export default Detail;
+function stateToProps(state) {
+    return {
+        state: state.reducer,
+        alertState: state.alertReducer
+    }
+}
+
+export default connect(stateToProps)(Detail);
